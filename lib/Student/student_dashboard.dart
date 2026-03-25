@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/Student/campus_navigation.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -139,20 +140,40 @@ class StudentDashboard extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 children: <Widget>[
                   _buildGridItem(
+                    context: context,
                     icon: Icons.edit_calendar_outlined,
                     label: "Attendance",
                   ),
-                  _buildGridItem(icon: Icons.event_note, label: "Timetable"),
                   _buildGridItem(
+                    context: context,
+                    icon: Icons.event_note,
+                    label: "Timetable",
+                  ),
+                  _buildGridItem(
+                    context: context,
                     icon: Icons.school_rounded,
                     label: "Exam Prep",
                   ),
                   _buildGridItem(
+                    context: context,
                     icon: Icons.insert_chart_outlined_sharp,
                     label: "Results",
                   ),
-                  _buildGridItem(icon: Icons.map, label: "Campus Map"),
                   _buildGridItem(
+                    context: context,
+                    icon: Icons.map,
+                    label: "Campus Map",
+                    onTap: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const CampusNavigation(),
+                      //   ),
+                      // );
+                    },
+                  ),
+                  _buildGridItem(
+                    context: context,
                     icon: Icons.my_library_books_outlined,
                     label: "Resources",
                   ),
@@ -337,9 +358,14 @@ class StudentDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildGridItem({required IconData icon, required String label}) {
+  Widget _buildGridItem({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    VoidCallback? onTap,
+  }) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -375,10 +401,7 @@ class StudentDashboard extends StatelessWidget {
   }
 }
 
-Widget _resourceContainer({
-  required String filename,
-  required String subject,
-}) {
+Widget _resourceContainer({required String filename, required String subject}) {
   return Expanded(
     child: Container(
       margin: const EdgeInsets.all(20),

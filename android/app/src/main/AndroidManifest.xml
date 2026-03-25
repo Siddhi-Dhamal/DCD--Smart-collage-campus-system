@@ -1,4 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Storage permissions required by file_picker -->
+    <!-- Android 6–12L (API 23–32) -->
+    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" -->
+        <!-- android:maxSdkVersion="32" /> -->
+    <!-- Android 13+ (API 33+) granular media permissions -->
+    <!-- <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" /> -->
+
     <application
         android:label="my_app"
         android:name="${applicationName}"

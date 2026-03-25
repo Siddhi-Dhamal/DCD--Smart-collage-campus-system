@@ -124,12 +124,34 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     _buildLabel("PHONE NUMBER"),
                     const SizedBox(height: 8),
+
                     _buildTextField(
                       hintText: "Phone Number",
                       prefix: Icons.phone,
                       input: TextInputType.number,
                     ),
+                    const SizedBox(height: 8),
 
+                    ElevatedButton(
+                      onPressed: (){}, 
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color.fromARGB(255, 26, 63, 191),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 4,
+                        shadowColor: Color.fromARGB(255, 26, 63, 191),
+                      ),
+                      child: Text(
+                        "Get OTP",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    
                     const SizedBox(height: 20),
 
                     _buildLabel("OTP"),
@@ -168,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
                             Text(
-                              'Sign In',
+                              'Log In',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
