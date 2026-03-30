@@ -164,12 +164,12 @@ class StudentDashboard extends StatelessWidget {
                     icon: Icons.map,
                     label: "Campus Map",
                     onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const CampusNavigation(),
-                      //   ),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CampusNavigation(),
+                        ),
+                      );
                     },
                   ),
                   _buildGridItem(
