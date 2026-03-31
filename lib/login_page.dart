@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/Student/student_dashboard.dart';
+import 'package:my_app/Teacher/professor_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Center(
                 child: Container(
                   width:
-                      110, // <-- Larger size so you can drop your logo in easily
+                  110, // <-- Larger size so you can drop your logo in easily
                   height: 110,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -133,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 8),
 
                     ElevatedButton(
-                      onPressed: (){}, 
+                      onPressed: (){},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color.fromARGB(255, 26, 63, 191),
                         shape: RoundedRectangleBorder(
@@ -151,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 20),
 
                     _buildLabel("OTP"),
@@ -170,13 +171,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 54,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return StudentDashboard();
-                              },
-                            ),
-                          );
+                          if (selectedRole == 'Teacher') {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => const DashboardPage(),
+                              ),
+                            );
+                          } else {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => StudentDashboard(),
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 26, 63, 191),

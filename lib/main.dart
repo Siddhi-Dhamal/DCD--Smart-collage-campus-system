@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/Teacher/upload_resource.dart';
-// import 'package:my_app/login_page.dart';
-// import 'package:my_app/login_page.dart';
-// import 'package:my_app/Student/student_dashboard.dart';
+import 'package:my_app/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,12 +14,12 @@ class MyApp extends StatelessWidget {
       title: "Dahiwadi College",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 26, 63, 191)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 26, 63, 191),
+        ),
         useMaterial3: true,
       ),
-      home: const UploadResource(),
+      home: const LoginScreen(),
     );
   }
 }
-
-
