@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "558502426662",
+    "project_id": "collage-campus-app-aa339",
+    "storage_bucket": "collage-campus-app-aa339.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:558502426662:android:fad567742fb7c788918ee7",
+        "android_client_info": {
+          "package_name": "com.example.campus_assistant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHJe-LH2Tedt9ZAOcPCL5KYNyFAkZ3BG0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:558502426662:android:2aa3ea93d51e0438918ee7",
+        "android_client_info": {
+          "package_name": "com.example.my_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHJe-LH2Tedt9ZAOcPCL5KYNyFAkZ3BG0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
