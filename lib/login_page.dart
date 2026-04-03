@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/services/phone_auth.dart';
 import 'package:my_app/Student/student_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -9,8 +10,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  PhoneAuth phoneAuth = PhoneAuth();
   final List<String> userRoles = ['Student', 'Teacher', 'Admin'];
   String selectedRole = 'Student';
+  bool isLoading = false;
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
+
+  @override
+  void dispose() {
+    phoneController.dispose();
+    otpController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,14 +138,63 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 8),
 
                     _buildTextField(
-                      hintText: "Phone Number",
+                      hintText: "Phone Number (10 digits or +91...)",
                       prefix: Icons.phone,
                       input: TextInputType.number,
+                      controller: phoneController,
                     ),
                     const SizedBox(height: 8),
 
                     ElevatedButton(
-                      onPressed: (){}, 
+                      onPressed: () async {
+                        final phone = phoneController.text.trim();
+                        if (phone.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please enter phone number.'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        final String normalizedPhone;
+                        try {
+                          normalizedPhone = PhoneAuth.normalizeIndianPhone(
+                            phone,
+                          );
+                        } on FormatException catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.message.toString())),
+                          );
+                          return;
+                        }
+
+                        setState(() {
+                          isLoading = true;
+                        });
+
+                        await phoneAuth.sendOTP(
+                          phoneNo: normalizedPhone,
+                          onError: (error) {
+                            if (!mounted) return;
+                            setState(() {
+                              isLoading = false;
+                            });
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(SnackBar(content: Text(error)));
+                          },
+
+                          onCodeSent: () {
+                            if (!mounted) return;
+                            setState(() => isLoading = false);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("OTP sent.")),
+                            );
+                          },
+                        );
+                      },
+
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color.fromARGB(255, 26, 63, 191),
                         shape: RoundedRectangleBorder(
@@ -151,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 20),
 
                     _buildLabel("OTP"),
@@ -160,6 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintText: "Enter OTP",
                       prefix: Icons.check_circle,
                       input: TextInputType.number,
+                      controller: otpController,
                     ),
 
                     const SizedBox(height: 28),
@@ -169,14 +231,65 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: double.infinity,
                       height: 54,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return StudentDashboard();
-                              },
-                            ),
+                        onPressed: () async {
+                          final otp = otpController.text.trim();
+                          if (otp.isEmpty) return;
+                          setState(() {
+                            isLoading = true;
+                          });
+
+                          final user = await phoneAuth.verifyOTP(
+                            otp: otp,
+                            onError: (error) {
+                              if (!mounted) return;
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(error)));
+                            },
                           );
+
+                          if (user != null) {
+                            switch (selectedRole) {
+                              case "Student":
+                                if (context.mounted) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const StudentDashboard(),
+                                    ),
+                                  );
+                                }
+                                break;
+
+                              case "Teacher":
+                                if (context.mounted) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const StudentDashboard(),
+                                    ),
+                                  );
+                                }
+                                break;
+
+                              case "Admin":
+                                if (context.mounted) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const StudentDashboard(),
+                                    ),
+                                  );
+                                }
+                                break;
+                            }
+                          }
+
+                          if (!mounted) return;
+                          setState(() => isLoading = false);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 26, 63, 191),
@@ -297,11 +410,11 @@ Widget _buildLabel(String text) {
     alignment: Alignment.centerLeft,
     child: Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 11,
         fontWeight: FontWeight.w700,
-        color: Colors.grey[500],
-        letterSpacing: 0.8,
+        color: Color.fromARGB(255, 13, 27, 75),
+        letterSpacing: 0.3,
       ),
     ),
   );
@@ -311,9 +424,11 @@ Widget _buildTextField({
   required String hintText,
   IconData? prefix,
   TextInputType? input,
+  required TextEditingController controller,
 }) {
   return TextField(
     keyboardType: input,
+    controller: controller,
     decoration: InputDecoration(
       hintText: hintText,
       filled: true,
