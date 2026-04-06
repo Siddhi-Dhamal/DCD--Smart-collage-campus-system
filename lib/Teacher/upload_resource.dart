@@ -20,7 +20,7 @@ class _UploadResourceState extends State<UploadResource> {
 
   final List<_ResourceItem> resources = [];
 
-  List<String> subjectList = [
+  final List<String> subjectList = [
     'Mathematics',
     'Physics',
     'Chemistry',
@@ -31,7 +31,7 @@ class _UploadResourceState extends State<UploadResource> {
     'Hindi',
   ];
 
-  List<String> classList = [
+  final List<String> classList = [
     '11th Science',
     '12th Science',
     '11th Commerce',
@@ -42,11 +42,8 @@ class _UploadResourceState extends State<UploadResource> {
 
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
     if (result != null && result.files.isNotEmpty) {
-      setState(() {
-        _pickedFile = result.files.first;
-      });
+      setState(() => _pickedFile = result.files.first);
     }
   }
 
@@ -58,28 +55,23 @@ class _UploadResourceState extends State<UploadResource> {
       );
       return;
     }
-
     final descriptionText = _descriptionController.text.trim();
     setState(() {
-      resources.add(
-        _ResourceItem(
-          subject: selectedSubject!,
-          className: selectedClass!,
-          title: _titleController.text.trim(),
-          description: descriptionText.isEmpty ? null : descriptionText,
-          file: _pickedFile!,
-        ),
-      );
+      resources.add(_ResourceItem(
+        subject: selectedSubject!,
+        className: selectedClass!,
+        title: _titleController.text.trim(),
+        description: descriptionText.isEmpty ? null : descriptionText,
+        file: _pickedFile!,
+      ));
       _titleController.clear();
       _descriptionController.clear();
       selectedSubject = null;
       selectedClass = null;
       _pickedFile = null;
     });
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Resource uploaded")));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Resource uploaded")));
   }
 
   @override
@@ -94,403 +86,494 @@ class _UploadResourceState extends State<UploadResource> {
     final hasFile = _pickedFile != null;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 246, 243, 243),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          minimum: const EdgeInsets.only(top: 40.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+      backgroundColor: const Color(0xFFF4F6FB),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ── App Bar ──────────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.arrow_back_rounded,
-                      size: 25,
-                      color: Colors.black54,
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_rounded,
+                        size: 20,
+                        color: Color(0xFF1A3DB5),
+                      ),
                     ),
                   ),
-                  // const SizedBox(width: 30,),
-                  Text(
-                    "Upload Resource",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  const Expanded(
+                    child: Center(
+                      child: Text(
+                        'Upload Resource',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF1A3DB5),
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                    ),
                   ),
-
-                  CircleAvatar(
-                    radius: 15,
-                    backgroundColor: Colors.grey[300],
-                    child: Icon(Icons.person, size: 20, color: Colors.white),
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0D1B4B),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.person_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ],
               ),
+            ),
 
-              const SizedBox(height: 20),
+            // ── Scrollable Body ──────────────────────────────────────────────
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
 
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      DropdownButtonFormField<String>(
-                        // icon: const SizedBox.shrink(),
-                        validator: (value) {
-                          if (value == null) {
-                            return "Please select a Subject";
-                          } else {
-                            return null;
-                          }
-                        },
-                        decoration: InputDecoration(
-                          labelText: "Subject",
-                          filled: true,
-                          fillColor: Colors.grey[50],
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: const Color.fromARGB(255, 40, 80, 227),
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                        hint: Text("Select Subject"),
-
-                        items: subjectList.map((String subject) {
-                          return DropdownMenuItem(
-                            value: subject,
-                            child: Text(subject),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedSubject = value;
-                          });
-                        },
+                    // ── Hero Text ────────────────────────────────────────────
+                    const Text(
+                      'RESOURCE MANAGEMENT',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF9098A3),
+                        letterSpacing: 1.2,
                       ),
-
-                      const SizedBox(height: 20),
-
-                      DropdownButtonFormField<String>(
-                        // icon: const SizedBox.shrink(),
-                        validator: (value) {
-                          if (value == null) {
-                            return "Please select a Class";
-                          } else {
-                            return null;
-                          }
-                        },
-                        decoration: InputDecoration(
-                          labelText: "Class",
-                          filled: true,
-                          fillColor: Colors.grey[50],
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: const Color.fromARGB(255, 40, 80, 227),
-                              width: 1,
-                            ),
-                          ),
+                    ),
+                    const SizedBox(height: 6),
+                    RichText(
+                      text: const TextSpan(
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF0D1B4B),
+                          height: 1.2,
+                          letterSpacing: -0.5,
                         ),
-                        hint: Text("Select Class"),
-
-                        items: classList.map((String classes) {
-                          return DropdownMenuItem(
-                            value: classes,
-                            child: Text(classes),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedClass = value;
-                          });
-                        },
+                        children: [
+                          TextSpan(text: 'Share Resources with\nyour '),
+                          TextSpan(
+                            text: 'Students.',
+                            style: TextStyle(color: Color(0xFF1A3DB5)),
+                          ),
+                        ],
                       ),
+                    ),
 
-                      const SizedBox(height: 20),
+                    const SizedBox(height: 28),
 
-                      TextFormField(
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return "Please give a title";
-                          } else {
-                            return null;
-                          }
-                        },
-                        controller: _titleController,
-                        decoration: InputDecoration(
-                          labelText: "Title",
-                          filled: true,
-                          fillColor: Colors.grey[50],
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1,
-                            ),
+                    // ── Form ─────────────────────────────────────────────────
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Select Subject
+                          _fieldLabel('Select Subject'),
+                          const SizedBox(height: 8),
+                          _styledDropdown<String>(
+                            value: selectedSubject,
+                            hint: 'Mathematics',
+                            items: subjectList,
+                            validator: (v) =>
+                            v == null ? 'Please select a subject' : null,
+                            onChanged: (v) =>
+                                setState(() => selectedSubject = v),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: const Color.fromARGB(255, 40, 80, 227),
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                      ),
 
-                      const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                      TextField(
-                        maxLines: 3,
-                        minLines: 2,
-                        controller: _descriptionController,
-                        decoration: InputDecoration(
-                          labelText: "Description(Optional)",
-                          filled: true,
-                          fillColor: Colors.grey[50],
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1,
-                            ),
+                          // Select Class
+                          _fieldLabel('Select Class'),
+                          const SizedBox(height: 8),
+                          _styledDropdown<String>(
+                            value: selectedClass,
+                            hint: 'Section A',
+                            items: classList,
+                            validator: (v) =>
+                            v == null ? 'Please select a class' : null,
+                            onChanged: (v) =>
+                                setState(() => selectedClass = v),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: 1,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: const Color.fromARGB(255, 40, 80, 227),
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                      ),
 
-                      const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                      // Pick File
-                      GestureDetector(
-                        onTap: hasFile ? null : _pickFile,
-                        child: Container(
-                          alignment: Alignment.center,
-                          transformAlignment: Alignment.center,
-                          height: 160,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            // color: const Color.fromARGB(255, 40, 80, 227),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey, width: 1),
+                          // Resource Title
+                          _fieldLabel('Resource Title'),
+                          const SizedBox(height: 8),
+                          _styledTextField(
+                            controller: _titleController,
+                            hint: 'e.g., Week 4: Neural Networks Fu...',
+                            validator: (v) =>
+                            (v == null || v.trim().isEmpty)
+                                ? 'Please give a title'
+                                : null,
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.cloud_upload_outlined,
-                                // color: const Color.fromARGB(255, 166, 162, 162),
-                                color: hasFile
-                                    ? Color.fromARGB(255, 23, 42, 215)
-                                    : Color.fromARGB(255, 166, 162, 162),
-                                size: 40,
-                              ),
-                              Text(
-                                hasFile
-                                    ? "File selected — tap \u00d7 to change"
-                                    : "Click to upload or drag and drop",
-                                style: TextStyle(
+
+                          const SizedBox(height: 20),
+
+                          // Description
+                          _fieldLabel('Description'),
+                          const SizedBox(height: 8),
+                          _styledTextField(
+                            controller: _descriptionController,
+                            hint: 'Briefly describe what this resource covers...',
+                            maxLines: 4,
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Upload File
+                          _fieldLabel('Upload File'),
+                          const SizedBox(height: 8),
+
+                          GestureDetector(
+                            onTap: _pickFile,
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 32, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
                                   color: hasFile
-                                      ? Color.fromARGB(255, 9, 48, 189)
-                                      : Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                                      ? const Color(0xFF1A3DB5)
+                                      : Colors.transparent,
+                                  width: 1.5,
+                                  style: BorderStyle.solid,
                                 ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.04),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 56,
+                                    height: 56,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE8EFFE),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.cloud_upload_rounded,
+                                      color: hasFile
+                                          ? const Color(0xFF1A3DB5)
+                                          : const Color(0xFF1A3DB5),
+                                      size: 28,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 14),
+                                  Text(
+                                    hasFile
+                                        ? _pickedFile!.name
+                                        : 'Tap to upload or drag and drop',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                      color: hasFile
+                                          ? const Color(0xFF1A3DB5)
+                                          : const Color(0xFF0D1B4B),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    hasFile
+                                        ? _fileSize(_pickedFile!.size)
+                                        : 'PDF, DOC, or ZIP (Max 50MB)',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFF9098A3),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  if (hasFile) ...[
+                                    const SizedBox(height: 10),
+                                    GestureDetector(
+                                      onTap: () =>
+                                          setState(() => _pickedFile = null),
+                                      child: const Text(
+                                        'Remove file',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xFFE53E3E),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ),
 
-                              Text(
-                                "Supported formats: PDF, DOCX, PPTX, images",
+                          const SizedBox(height: 24),
+
+                          // Upload Button
+                          SizedBox(
+                            width: double.infinity,
+                            height: 54,
+                            child: ElevatedButton.icon(
+                              onPressed: _uploadResource,
+                              icon: const Icon(
+                                Icons.upload_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              label: const Text(
+                                'Upload Resource',
                                 style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 12,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
                                 ),
                               ),
-                            ],
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF1A3DB5),
+                                elevation: 4,
+                                shadowColor:
+                                const Color(0xFF1A3DB5).withValues(alpha: 0.4),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+
+                          const SizedBox(height: 20),
+
+
+                          // ── Uploaded Resources List ──────────────────────
+                          if (resources.isNotEmpty) ...[
+                            Text(
+                              'Uploaded Resources (${resources.length})',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF0D1B4B),
+                                letterSpacing: -0.3,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ListView.separated(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: resources.length,
+                              separatorBuilder: (_, _) =>
+                              const SizedBox(height: 10),
+                              itemBuilder: (context, index) =>
+                                  _ResourceListCard(
+                                    item: resources[index],
+                                    onDelete: () {
+                                      setState(() {
+                                        resources.removeAt(index);
+                                        Navigator.of(context).pop();
+                                      });
+                                    },
+                                  ),
+                            ),
+                            const SizedBox(height: 24),
+                          ],
+                        ],
                       ),
-                      const SizedBox(height: 8),
-
-                      if (hasFile) _fileChip(),
-
-                      const SizedBox(height: 20),
-
-                      ElevatedButton(
-                        onPressed: _uploadResource,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(
-                            255,
-                            40,
-                            80,
-                            227,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                          minimumSize: Size(double.infinity, 50),
-                        ),
-                        child: const Text(
-                          "Upload Resource",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-
-              _buildResourceList(),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
 
-  Widget _fileChip() {
-    final file = _pickedFile!;
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-      margin: const EdgeInsets.only(top: 10),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.file_copy_rounded, size: 20),
-
-          const SizedBox(width: 10),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      // ── Bottom Navigation Bar ─────────────────────────────────────────────
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x12000000),
+              blurRadius: 20,
+              offset: Offset(0, -4),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding:
+            const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text(
-                  file.name,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-
-                const SizedBox(height: 2),
-                Text(
-                  _fileSize(file.size),
-                  style: TextStyle(fontSize: 11, color: Colors.grey),
-                ),
+                _navItem(Icons.home_rounded, 'HOME', false),
+                _navItem(Icons.calendar_month_rounded, 'SCHEDULE', false),
+                _navItem(Icons.upload_rounded, 'UPLOAD', true),
+                _navItem(Icons.menu_book_rounded, 'LIBRARY', false),
               ],
             ),
           ),
-
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: () => setState(() => _pickedFile = null),
-            child: Container(
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.close_rounded,
-                size: 14,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildResourceList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 20, top: 20, bottom: 10),
-          child: Text(
-            "Uploaded Resources (${resources.length})",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  Widget _fieldLabel(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w700,
+        color: Color(0xFF374151),
+        letterSpacing: 0.1,
+      ),
+    );
+  }
+
+  Widget _styledDropdown<T>({
+    required T? value,
+    required String hint,
+    required List<String> items,
+    required void Function(T?) onChanged,
+    String? Function(T?)? validator,
+  }) {
+    return DropdownButtonFormField<T>(
+      
+      validator: validator,
+      icon: const Icon(Icons.keyboard_arrow_down_rounded,
+          color: Color(0xFF6B7280)),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding:
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
         ),
-        ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: resources.length,
-          itemBuilder: (context, index) => _ResourceListCard(
-            item: resources[index],
-            onDelete: () {
-              setState(() {
-                resources.removeAt(index);
-                Navigator.of(context).pop();
-              });
-            },
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF1A3DB5), width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide:
+          const BorderSide(color: Color(0xFFE53E3E), width: 1.5),
+        ),
+      ),
+      hint: Text(
+        hint,
+        style: const TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+      ),
+      items: items
+          .map((s) => DropdownMenuItem<T>(
+        value: s as T,
+        child: Text(s,
+            style: const TextStyle(
+                fontSize: 14, color: Color(0xFF0D1B4B))),
+      ))
+          .toList(),
+      onChanged: onChanged,
+    );
+  }
+
+  Widget _styledTextField({
+    required TextEditingController controller,
+    required String hint,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      validator: validator,
+      style: const TextStyle(fontSize: 14, color: Color(0xFF0D1B4B)),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle:
+        const TextStyle(color: Color(0xFF9098A3), fontSize: 14),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding:
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF1A3DB5), width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide:
+          const BorderSide(color: Color(0xFFE53E3E), width: 1.5),
+        ),
+      ),
+    );
+  }
+
+  Widget _navItem(IconData icon, String label, bool isSelected) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon,
+            color: isSelected
+                ? const Color(0xFF1A3DB5)
+                : const Color(0xFF9098A3),
+            size: 24),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: isSelected
+                ? const Color(0xFF1A3DB5)
+                : const Color(0xFF9098A3),
+            letterSpacing: 0.5,
           ),
         ),
       ],
@@ -498,23 +581,12 @@ class _UploadResourceState extends State<UploadResource> {
   }
 }
 
-// class _DashedBorderPainter extends CustomPainter {
-
-//   @override
-//   void paint(Canvas canvas, )
-// }
+// ── Helpers ─────────────────────────────────────────────────────────────────
 
 String _fileSize(int bytes) {
-  if (bytes < 1024) return "$bytes B";
-  if (bytes > 1024) {
-    bytes = (bytes / 1024).toInt();
-    return "${bytes.toStringAsFixed(2)} KB";
-  }
-  if (bytes > 1024 * 1024) {
-    bytes = (bytes / 1024 * 1024).toInt();
-    return "${bytes.toStringAsFixed(2)} MB";
-  }
-  return "";
+  if (bytes < 1024) return '$bytes B';
+  if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+  return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
 }
 
 class _ResourceItem {
@@ -542,15 +614,14 @@ class _ResourceListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 6,
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -558,12 +629,13 @@ class _ResourceListCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color(0xFFE8EFFE),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.file_copy_rounded, color: Colors.black, size: 28),
+            child: const Icon(Icons.insert_drive_file_rounded,
+                color: Color(0xFF1A3DB5), size: 24),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -573,58 +645,28 @@ class _ResourceListCard extends StatelessWidget {
                 Text(
                   item.title,
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Color(0xFF0D1B4B),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(110, 0, 150, 135),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        item.subject,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.blue,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
+                    _tag(item.subject, const Color(0xFFE8EFFE),
+                        const Color(0xFF1A3DB5)),
                     const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(111, 33, 149, 243),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        item.className,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.teal,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
+                    _tag(item.className, const Color(0xFFD1FAE5),
+                        const Color(0xFF059669)),
                   ],
                 ),
                 if (item.description?.isNotEmpty == true) ...[
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 4),
                   Text(
-                    item.description ?? "",
-                    style: const TextStyle(color: Colors.black54, fontSize: 12),
+                    item.description!,
+                    style: const TextStyle(
+                        color: Color(0xFF9098A3), fontSize: 12),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -632,7 +674,8 @@ class _ResourceListCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   item.file.name,
-                  style: TextStyle(color: Colors.black, fontSize: 11),
+                  style: const TextStyle(
+                      color: Color(0xFF6B7280), fontSize: 11),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -648,75 +691,48 @@ class _ResourceListCard extends StatelessWidget {
                   if (path == null || path.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("File path is not available"),
-                      ),
+                          content: Text('File path is not available')),
                     );
                     return;
                   }
-
                   final result = await OpenFilex.open(path);
-                  if (result.type != ResultType.done) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "Unable to open file: ${result.message}",
-                          ),
-                        ),
-                      );
-                    }
+                  if (result.type != ResultType.done && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content:
+                          Text('Unable to open file: ${result.message}')),
+                    );
                   }
                 },
-                child: const Icon(
-                  Icons.open_in_new_rounded,
-                  color: Colors.grey,
-                  size: 22,
-                ),
+                child: const Icon(Icons.open_in_new_rounded,
+                    color: Color(0xFF9098A3), size: 20),
               ),
               const SizedBox(height: 8),
               GestureDetector(
-                // onTap: onDelete,
                 onTap: () => showDialog(
                   context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(
-                        "Delete Resource",
+                  builder: (_) => AlertDialog(
+                    title: const Text('Delete Resource',
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    content: const Text(
+                        'Are you sure you want to delete this file?'),
+                    actions: [
+                      TextButton(
+                        onPressed: onDelete,
+                        child: const Text('Yes',
+                            style: TextStyle(color: Color(0xFFE53E3E))),
                       ),
-                      content: Text(
-                        "Are you sure you want to delete this file?",
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('No',
+                            style: TextStyle(color: Color(0xFF1A3DB5))),
                       ),
-                      actions: [
-                        TextButton(
-                          onPressed: onDelete,
-                          child: Text(
-                            "Yes",
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            "No",
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
+                    ],
+                  ),
                 ),
-                child: const Icon(
-                  Icons.delete_outline_rounded,
-                  color: Colors.redAccent,
-                  size: 24,
-                ),
+                child: const Icon(Icons.delete_outline_rounded,
+                    color: Color(0xFFE53E3E), size: 22),
               ),
             ],
           ),
@@ -724,57 +740,17 @@ class _ResourceListCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget _tag(String label, Color bg, Color fg) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(label,
+          style: TextStyle(
+              fontSize: 10, fontWeight: FontWeight.w700, color: fg)),
+    );
+  }
 }
-//     return Container(
-//       padding: const EdgeInsets.all(14),
-//       margin: const EdgeInsets.all(10),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(8),
-//       ),
-
-//       child: Row(
-//         // crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Container(
-//             padding: const EdgeInsets.all(12),
-//             decoration: BoxDecoration(
-//               borderRadius: BorderRadius.circular(10),
-//               color: Colors.purple,
-//             ),
-//             child: Icon(Icons.file_copy_rounded, size: 20),
-//           ),
-//           Column(
-//             children: [
-//               Text(
-//                 title,
-//                 style: TextStyle(
-//                   fontSize: 18,
-//                   fontWeight: FontWeight.bold,
-//                 ),
-//               ),
-//               Row(
-//                 children: [
-//                   Text(
-//                     subject,
-//                     style: TextStyle(
-//                       color: Colors.blue,
-//                     ),
-//                   ),
-//                   SizedBox(width: 20),
-
-//                   Text(
-//                     className,
-//                     style: TextStyle(
-//                       color: Colors.green.shade600,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ]
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }

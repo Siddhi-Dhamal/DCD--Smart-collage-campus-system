@@ -49,3 +49,4 @@ android/local.properties
 # Secrets
 android/key.properties
 .env
+/.gradle-local

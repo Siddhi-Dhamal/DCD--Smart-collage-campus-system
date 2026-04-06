@@ -15,7 +15,10 @@ class _CampusNavigationState extends State<CampusNavigation> {
   static const Color _accentSky = Color.fromARGB(255, 97, 187, 255);
   static const Color _surfaceTint = Color.fromARGB(255, 246, 248, 255);
 
-  static const LatLng _collegeCenter = LatLng(17.701986622937138, 74.5399990234726);
+  static const LatLng _collegeCenter = LatLng(
+    17.701986622937138,
+    74.5399990234726,
+  );
 
   GoogleMapController? _mapController;
   final TextEditingController _searchController = TextEditingController();
