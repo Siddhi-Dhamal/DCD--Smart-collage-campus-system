@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/services/phone_auth.dart';
 import 'package:my_app/Student/student_dashboard.dart';
+import 'package:my_app/Teacher/professor_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -37,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Center(
                 child: Container(
                   width:
-                      110, // <-- Larger size so you can drop your logo in easily
+                  110, // <-- Larger size so you can drop your logo in easily
                   height: 110,
                   decoration: BoxDecoration(
                     color: Colors.white,

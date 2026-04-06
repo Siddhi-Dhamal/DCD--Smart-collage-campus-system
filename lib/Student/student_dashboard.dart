@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/Student/campus_navigation.dart';
+// import 'package:my_app/Student/campus_navigation.dart';
+import 'package:my_app/Student/attendance_display.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -14,227 +15,139 @@ class StudentDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _surfaceTint,
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color.fromARGB(255, 236, 244, 255), Color(0xFFF6F2FF)],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    color: Colors.white.withValues(alpha: 0.92),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color.fromARGB(24, 26, 43, 128),
-                        blurRadius: 18,
-                        offset: Offset(0, 8),
+      backgroundColor: const Color(0xFFF4F6FB),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+
+              // ── Header ──────────────────────────────────────────────────────
+              Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFF1A3DB5),
+                        width: 2.5,
                       ),
-                    ],
+                    ),
+                    child: const CircleAvatar(
+                      radius: 26,
+                      backgroundImage: NetworkImage(
+                        "https://cdn-icons-png.flaticon.com/512/12225/12225935.png",
+                      ),
+                    ),
                   ),
-                  child: ListTile(
-                    leading: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                          colors: [_primaryBlue, _accentSky],
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color.fromARGB(40, 40, 80, 227),
-                            blurRadius: 14,
-                            offset: Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: const CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        radius: 30,
-                        child: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            "https://cdn-icons-png.flaticon.com/512/12225/12225935.png",
-                          ),
-                          radius: 25,
+                  const SizedBox(width: 14),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        'Good Morning,',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF6B7280),
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
-                    title: const Text(
-                      "Welcome Back, ",
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Color.fromRGBO(104, 104, 104, 1),
-                      ),
-                    ),
-                    subtitle: const Padding(
-                      padding: EdgeInsets.only(bottom: 20),
-                      child: Text(
-                        "Shivam Devkar",
+                      SizedBox(height: 2),
+                      Text(
+                        'Aryan Sharma',
                         style: TextStyle(
                           fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0D1B4B),
+                          letterSpacing: -0.4,
                         ),
                       ),
+                    ],
+                  ),
+                  const Spacer(),
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.07),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    trailing: Container(
-                      padding: const EdgeInsets.all(9),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 233, 240, 255),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: const Icon(
-                        Icons.notifications_rounded,
-                        color: _deepBlue,
-                      ),
+                    child: const Icon(
+                      Icons.notifications_rounded,
+                      color: Color(0xFF0D1B4B),
+                      size: 22,
                     ),
                   ),
-                ),
+                ],
+              ),
 
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  margin: const EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    bottom: 10,
-                    top: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFE6F0FF), Color(0xFFE9E6FF)],
-                    ),
-                    border: Border.all(color: _primaryBlue, width: 1.4),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color.fromARGB(20, 40, 80, 227),
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  height: 50,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.record_voice_over_outlined,
-                        color: _deepBlue,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Text(
-                            "Important: Mid term results are out so please check your results",
-                            style: const TextStyle(
-                              color: _deepBlue,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            softWrap: false,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+              const SizedBox(height: 16),
+
+              // ── Announcement Banner ─────────────────────────────────────────
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8EFFE),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(left: 20, right: 90),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 44),
-                      elevation: 3,
-                      backgroundColor: _primaryBlue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.campaign_rounded,
+                      color: Color(0xFF1A3DB5),
+                      size: 20,
                     ),
-                    onPressed: () {},
-                    child: Center(
-                      child: Row(
-                        spacing: 5,
-                        children: [
-                          const Icon(Icons.location_on_outlined, size: 25),
-                          const Text(
-                            "Geo-fenced Attendence",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(
+                          'Important: Mid-term results are out! Check your portal now.',
+                          style: const TextStyle(
+                            color: Color(0xFF1A3DB5),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 15, left: 20),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Quick Services",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+              ),
+
+              const SizedBox(height: 14),
+
+              // ── Geo-fenced Attendance Button ────────────────────────────────
+              SizedBox(
+                width: 220,
+                height: 44,
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.location_on_rounded, size: 20),
+                  label: const Text(
+                    'Geo-fenced Attendance',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                ),
-                GridView.count(
-                  crossAxisCount: 3,
-                  // mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                  // padding: const EdgeInsets.all(10),
-                  childAspectRatio: 1,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: <Widget>[
-                    _buildGridItem(
-                      context: context,
-                      icon: Icons.edit_calendar_outlined,
-                      label: "Attendance",
-                      accentColor: const Color(0xFF2E7DFF),
-                    ),
-                    _buildGridItem(
-                      context: context,
-                      icon: Icons.event_note,
-                      label: "Timetable",
-                      accentColor: const Color(0xFF7A57E8),
-                    ),
-                    _buildGridItem(
-                      context: context,
-                      icon: Icons.school_rounded,
-                      label: "Exam Prep",
-                      accentColor: const Color(0xFF1B9E7A),
-                    ),
-                    _buildGridItem(
-                      context: context,
-                      icon: Icons.insert_chart_outlined_sharp,
-                      label: "Results",
-                      accentColor: const Color(0xFFE37B26),
-                    ),
-                    _buildGridItem(
-                      context: context,
-                      icon: Icons.map,
-                      label: "Campus Map",
-                      accentColor: const Color(0xFFD74A9D),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CampusNavigation(),
-                          ),
-                        );
-                      },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1A3DB5),
+                    foregroundColor: Colors.white,
+                    elevation: 4,
+                    shadowColor: const Color(0xFF1A3DB5).withOpacity(0.4),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
                     ),
                     _buildGridItem(
                       context: context,
@@ -244,51 +157,140 @@ class StudentDashboard extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
 
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 20),
-                  child: Text(
-                    "Current Standing",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
+              const SizedBox(height: 22),
+
+              // ── Quick Services ──────────────────────────────────────────────
+              const Text(
+                'Quick Services',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF0D1B4B),
+                  letterSpacing: -0.3,
                 ),
-                Container(
-                  height: 150,
-                  padding: EdgeInsets.all(20),
-                  margin: EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.white, Color(0xFFEFF4FF)],
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color.fromARGB(24, 26, 43, 128),
-                        blurRadius: 14,
-                        offset: Offset(0, 6),
-                      ),
-                    ],
+              ),
+              const SizedBox(height: 14),
+
+              GridView.count(
+                crossAxisCount: 3,
+                crossAxisSpacing: 14,
+                mainAxisSpacing: 14,
+                childAspectRatio: 1.1,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _buildGridItem(
+                    context: context,
+                    icon: Icons.edit_calendar_outlined,
+                    label: 'Attendance',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AttendanceDisplayPage(),
+                        ),
+                      );
+                    },
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Overall Attendence",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
-                            ),
+                  _buildGridItem(
+                    context: context,
+                    icon: Icons.event_note_rounded,
+                    label: 'Timetable',
+                  ),
+                  _buildGridItem(
+                    context: context,
+                    icon: Icons.school_rounded,
+                    label: 'Exam Prep',
+                  ),
+                  _buildGridItem(
+                    context: context,
+                    icon: Icons.insert_chart_outlined_sharp,
+                    label: 'Results',
+                  ),
+                  _buildGridItem(
+                    context: context,
+                    icon: Icons.map_rounded,
+                    label: 'Campus Map',
+                    onTap: () {
+                      // Navigator.push(context, MaterialPageRoute(
+                      //   builder: (context) => const CampusNavigation()));
+                    },
+                  ),
+                  _buildGridItem(
+                    context: context,
+                    icon: Icons.my_library_books_outlined,
+                    label: 'Resources',
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 22),
+
+              // ── Current Standing ────────────────────────────────────────────
+              const Text(
+                'Current Standing',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF0D1B4B),
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Overall Attendance',
+                          style: TextStyle(
+                            color: Color(0xFF9098A3),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
                           ),
-                          Text(
-                            '${85}%',
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          '85%',
+                          style: TextStyle(
+                            fontSize: 34,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFF0D1B4B),
+                            height: 1,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFD1FAE5),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: const Text(
+                            'Safe Zone',
                             style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF059669),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
                             ),
                           ),
                           Container(
@@ -319,131 +321,225 @@ class StudentDashboard extends StatelessWidget {
                           Symbols.person_raised_hand_rounded,
                           size: 30,
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Next Class",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          "View Full",
-                          style: TextStyle(
-                            color: Colors.blue[700],
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20),
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.white, Color(0xFFF4F8FF)],
+                      ],
                     ),
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color.fromARGB(18, 40, 80, 227),
-                        blurRadius: 12,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Advanced Data Structures",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                    CircularPercentIndicator(
+                      radius: 52,
+                      lineWidth: 9,
+                      percent: 0.85,
+                      progressColor: const Color(0xFF1A3DB5),
+                      backgroundColor: const Color(0xFFE8EFFE),
+                      circularStrokeCap: CircularStrokeCap.round,
+                      animation: true,
+                      center: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE8EFFE),
+                          shape: BoxShape.circle,
                         ),
-                      ),
-
-                      Text(
-                        "Room 402",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                        child: const Icon(
+                          Icons.insert_chart_outlined_sharp,
+                          color: Color(0xFF1A3DB5),
+                          size: 22,
                         ),
-                      ),
-
-                      Row(
-                        children: [
-                          Icon(Symbols.access_time_filled, fill: 1, size: 20),
-                          const SizedBox(width: 5),
-                          Text(
-                            "10:30 AM",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-
-                          const SizedBox(width: 25),
-                          Icon(
-                            Icons.person,
-                            fill: 1,
-                            size: 20,
-                            color: _deepBlue,
-                          ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: Text(
-                              "Teacher Name",
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ],
                   ),
                 ),
 
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 20),
-                  child: Text(
-                    "Resources Shared",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
+              const SizedBox(height: 22),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _resourceContainer(
-                      filename: "Resource filename sfsdgsd",
-                      subject: "MATHEMATICS",
-                      accentColor: const Color(0xFFFFB24C),
+              // ── Next Class ──────────────────────────────────────────────────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Next Class',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0D1B4B),
+                      letterSpacing: -0.3,
                     ),
-                    _resourceContainer(
-                      filename: "Resource filename",
-                      subject: "PHYSICS",
-                      accentColor: const Color(0xFF46A7FF),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text(
+                      'View Full',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A3DB5),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Advanced Data Structures',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF0D1B4B),
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Room 402 • Engineering Block',
+                            style: TextStyle(
+                              color: Color(0xFF9098A3),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.access_time_rounded,
+                                size: 16,
+                                color: Color(0xFF9098A3),
+                              ),
+                              const SizedBox(width: 5),
+                              const Text(
+                                '10:30 AM',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                  color: Color(0xFF374151),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              const Icon(
+                                Icons.person_rounded,
+                                size: 16,
+                                color: Color(0xFF9098A3),
+                              ),
+                              const SizedBox(width: 5),
+                              const Text(
+                                'Dr. Emily Watson',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                  color: Color(0xFF374151),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE8EFFE),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.menu_book_rounded,
+                        color: Color(0xFF1A3DB5),
+                        size: 22,
+                      ),
+                    ),
+                  ],
+                ),
+
+              const SizedBox(height: 22),
+
+              // ── Resources Shared ────────────────────────────────────────────
+              const Text(
+                'Resources Shared',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF0D1B4B),
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: _resourceCard(
+                      icon: Icons.picture_as_pdf_rounded,
+                      iconColor: Colors.white,
+                      iconBg: const Color(0xFFEF4444),
+                      filename: 'Lecture_Notes_0...',
+                      subject: 'MATHEMATICS',
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: _resourceCard(
+                      icon: Icons.insert_drive_file_rounded,
+                      iconColor: Colors.white,
+                      iconBg: const Color(0xFF3B82F6),
+                      filename: 'Assignment_2.d...',
+                      subject: 'NETWORKING',
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
+      ),
+
+      // ── Bottom Navigation Bar ───────────────────────────────────────────────
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x12000000),
+              blurRadius: 20,
+              offset: Offset(0, -4),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _navItem(Icons.home_rounded, 'HOME', true),
+                _navItem(Icons.insert_drive_file_rounded, 'RESULTS', false),
+                _navItem(Icons.map_rounded, 'MAP', false),
+                _navItem(Icons.chat_bubble_rounded, 'MESSAGES', false),
               ],
             ),
           ),
@@ -460,102 +556,121 @@ class StudentDashboard extends StatelessWidget {
     VoidCallback? onTap,
   }) {
     return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  accentColor.withValues(alpha: 0.15),
-                  accentColor.withValues(alpha: 0.3),
-                ],
+      onTap: onTap ?? () {},
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 28,
+              color: const Color(0xFF1A3DB5),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF374151),
               ),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: accentColor.withValues(alpha: 0.16),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
-            child: Icon(icon, size: 30, color: accentColor),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _navItem(IconData icon, String label, bool isSelected) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          color: isSelected ? const Color(0xFF1A3DB5) : const Color(0xFF9098A3),
+          size: 24,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: isSelected ? const Color(0xFF1A3DB5) : const Color(0xFF9098A3),
+            letterSpacing: 0.5,
+          ),
+        ),
+      ],
     );
   }
 }
 
-Widget _resourceContainer({
+Widget _resourceCard({
+  required IconData icon,
+  required Color iconColor,
+  required Color iconBg,
   required String filename,
   required String subject,
-  required Color accentColor,
 }) {
-  return Expanded(
-    child: Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.white, Color(0xFFF7FAFF)],
+  return Container(
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
         ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color.fromARGB(22, 40, 80, 227),
-            blurRadius: 10,
-            offset: Offset(0, 4),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: iconBg,
+            borderRadius: BorderRadius.circular(10),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: accentColor.withValues(alpha: 0.18),
-            ),
-            child: Icon(Icons.picture_as_pdf_rounded, color: accentColor),
+          child: Icon(icon, color: iconColor, size: 22),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          filename,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 13,
+            color: Color(0xFF0D1B4B),
           ),
-          const SizedBox(height: 8),
-          Text(
-            filename,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          subject,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 10,
+            color: Color(0xFF9098A3),
+            letterSpacing: 0.5,
           ),
-          const SizedBox(height: 2),
-          Text(
-            subject,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 10,
-              color: accentColor,
-              letterSpacing: 0.4,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }
