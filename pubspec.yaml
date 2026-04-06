@@ -34,10 +34,20 @@ dependencies:
   material_symbols_icons: ^4.2906.0
   file_picker: ^10.3.10
   open_filex: ^4.7.0
+  firebase_auth: ^6.3.0
+  google_maps_flutter: ^2.16.0
+  geolocator: ^12.0.0
+  # Import the BoM for the Firebase platform
+  # implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
+
+  # Add the dependency for the Firebase Authentication library
+  # When using the BoM, you don't specify versions in Firebase library dependencies
+  # implementation("com.google.firebase:firebase-auth")
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  firebase_core: ^4.6.0
 
 dev_dependencies:
   flutter_test:

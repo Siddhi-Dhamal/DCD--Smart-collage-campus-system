@@ -7,6 +7,11 @@ import 'package:material_symbols_icons/symbols.dart';
 class StudentDashboard extends StatelessWidget {
   const StudentDashboard({super.key});
 
+  static const Color _primaryBlue = Color.fromARGB(255, 40, 80, 227);
+  static const Color _deepBlue = Color.fromARGB(255, 22, 53, 165);
+  static const Color _accentSky = Color.fromARGB(255, 97, 187, 255);
+  static const Color _surfaceTint = Color.fromARGB(255, 246, 248, 255);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,11 +118,10 @@ class StudentDashboard extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                             fontSize: 13,
                           ),
-                          softWrap: false,
-                        ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
 
@@ -145,7 +149,13 @@ class StudentDashboard extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
-                  ),
+                    _buildGridItem(
+                      context: context,
+                      icon: Icons.my_library_books_outlined,
+                      label: "Resources",
+                      accentColor: const Color(0xFF006B78),
+                    ),
+                  ],
                 ),
               ),
 
@@ -283,6 +293,33 @@ class StudentDashboard extends StatelessWidget {
                               fontSize: 12,
                             ),
                           ),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              color: Color.fromRGBO(21, 228, 21, 0.166),
+                            ),
+                            child: Text(
+                              "Safe Zone",
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      CircularPercentIndicator(
+                        radius: 55,
+                        lineWidth: 10,
+                        percent: 0.85,
+                        progressColor: Color.fromRGBO(12, 49, 236, 1),
+                        circularStrokeCap: CircularStrokeCap.round,
+                        animation: true,
+                        center: Icon(
+                          Symbols.person_raised_hand_rounded,
+                          size: 30,
                         ),
                       ],
                     ),
@@ -307,10 +344,9 @@ class StudentDashboard extends StatelessWidget {
                           size: 22,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
               const SizedBox(height: 22),
 
@@ -437,7 +473,6 @@ class StudentDashboard extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
 
               const SizedBox(height: 22),
 
@@ -517,6 +552,7 @@ class StudentDashboard extends StatelessWidget {
     required BuildContext context,
     required IconData icon,
     required String label,
+    required Color accentColor,
     VoidCallback? onTap,
   }) {
     return InkWell(
