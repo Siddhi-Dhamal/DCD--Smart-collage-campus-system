@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-// import 'package:my_app/Student/campus_navigation.dart';
 import 'package:my_app/Student/attendance_display.dart';
+import 'package:my_app/Student/campus_navigation.dart';
+import 'package:my_app/services/user_profile_service.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class StudentDashboard extends StatelessWidget {
-  const StudentDashboard({super.key});
+  final StudentProfile? profile;
+  const StudentDashboard({super.key, this.profile});
 
   // static const Color _primaryBlue = Color.fromARGB(255, 40, 80, 227);
   // static const Color _deepBlue = Color.fromARGB(255, 22, 53, 165);
@@ -14,6 +16,8 @@ class StudentDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final student = profile ?? StudentProfile.empty();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FB),
       body: SafeArea(
@@ -45,7 +49,7 @@ class StudentDashboard extends StatelessWidget {
                   const SizedBox(width: 14),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         'Good Morning,',
                         style: TextStyle(
@@ -56,7 +60,7 @@ class StudentDashboard extends StatelessWidget {
                       ),
                       SizedBox(height: 2),
                       Text(
-                        'Aryan Sharma',
+                        student.name.isEmpty ? "Student" : student.name,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
@@ -132,7 +136,7 @@ class StudentDashboard extends StatelessWidget {
 
               // ── Geo-fenced Attendance Button ────────────────────────────────
               SizedBox(
-                width: 220,
+                width: 250,
                 height: 44,
                 child: ElevatedButton.icon(
                   onPressed: () {},
@@ -214,8 +218,8 @@ class StudentDashboard extends StatelessWidget {
                     icon: Icons.map_rounded,
                     label: 'Campus Map',
                     onTap: () {
-                      // Navigator.push(context, MaterialPageRoute(
-                      //   builder: (context) => const CampusNavigation()));
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => const CampusNavigation()));
                     },
                   ),
                   _buildGridItem(
