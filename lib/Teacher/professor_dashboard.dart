@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/Teacher/mark_attendance_page.dart';
 import 'package:my_app/Teacher/upload_resource.dart';
+import 'package:my_app/services/user_profile_service.dart';
+
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+  final FacultyProfile? profile;
+  const DashboardPage({super.key, this.profile});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -11,18 +14,41 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const DashboardContent(),
-    const Center(child: Text('Schedule', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Classes', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Inbox', style: TextStyle(fontSize: 24))),
-  ];
+  // final List<Widget> _pages = [
+  //   const DashboardContent(),
+  //   const Center(child: Text('Schedule', style: TextStyle(fontSize: 24))),
+  //   const Center(child: Text('Classes', style: TextStyle(fontSize: 24))),
+  //   const Center(child: Text('Inbox', style: TextStyle(fontSize: 24))),
+  // ];
 
   @override
   Widget build(BuildContext context) {
+    final faculty = widget.profile ?? FacultyProfile.empty();
+
+    Widget pageForIndex() {
+      switch (_selectedIndex) {
+        case 0:
+          return DashboardContent(profile: faculty);
+        case 1:
+          return const Center(
+            child: Text('Schedule', style: TextStyle(fontSize: 24)),
+          );
+        case 2:
+          return const Center(
+            child: Text('Classes', style: TextStyle(fontSize: 24)),
+          );
+        case 3:
+          return const Center(
+            child: Text('Inbox', style: TextStyle(fontSize: 24)),
+          );
+        default: 
+          return DashboardContent(profile: faculty);
+      }
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FB),
-      body: _pages[_selectedIndex],
+      body: pageForIndex(),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -104,8 +130,9 @@ class _NavItem extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color:
-              isSelected ? const Color(0xFF1A3DB5) : const Color(0xFF9098A3),
+              color: isSelected
+                  ? const Color(0xFF1A3DB5)
+                  : const Color(0xFF9098A3),
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -113,8 +140,7 @@ class _NavItem extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: 11,
-                fontWeight:
-                isSelected ? FontWeight.w700 : FontWeight.w500,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 color: isSelected
                     ? const Color(0xFF1A3DB5)
                     : const Color(0xFF9098A3),
@@ -128,7 +154,8 @@ class _NavItem extends StatelessWidget {
 }
 
 class DashboardContent extends StatelessWidget {
-  const DashboardContent({super.key});
+  final FacultyProfile profile;
+  const DashboardContent({super.key, required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -139,8 +166,7 @@ class DashboardContent extends StatelessWidget {
           // App Bar
           SliverToBoxAdapter(
             child: Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -235,8 +261,8 @@ class DashboardContent extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Dr. Sarah Johnson',
+                      Text(
+                        profile.name.isEmpty ? "Faculty" : profile.name,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
@@ -245,8 +271,10 @@ class DashboardContent extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
-                        'Professor of Computer Science',
+                      Text(
+                        profile.subject.isEmpty
+                            ? "Faculty Subject"
+                            : profile.subject,
                         style: TextStyle(
                           fontSize: 13,
                           color: Color(0xFF6B7280),
@@ -256,7 +284,9 @@ class DashboardContent extends StatelessWidget {
                       const SizedBox(height: 6),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFECEFF8),
                           borderRadius: BorderRadius.circular(20),
@@ -285,7 +315,10 @@ class DashboardContent extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 18,
+                ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF7C3AED), Color(0xFF5B21B6)],
@@ -329,7 +362,11 @@ class DashboardContent extends StatelessWidget {
                         const SizedBox(height: 6),
                         Row(
                           children: [
-                            const Icon(Icons.arrow_upward_rounded, color: Colors.white70, size: 13),
+                            const Icon(
+                              Icons.arrow_upward_rounded,
+                              color: Colors.white70,
+                              size: 13,
+                            ),
                             const SizedBox(width: 4),
                             const Text(
                               '12 new this semester',
@@ -376,7 +413,6 @@ class DashboardContent extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.all(20),
@@ -389,7 +425,9 @@ class DashboardContent extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF1A3DB5).withValues(alpha: 0.35),
+                            color: const Color(
+                              0xFF1A3DB5,
+                            ).withValues(alpha: 0.35),
                             blurRadius: 16,
                             offset: const Offset(0, 6),
                           ),
@@ -451,8 +489,8 @@ class DashboardContent extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 14),
-                  // Classes Today
 
+                  // Classes Today
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.all(20),
@@ -465,7 +503,9 @@ class DashboardContent extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF1A3DB5).withValues(alpha: 0.35),
+                            color: const Color(
+                              0xFF1A3DB5,
+                            ).withValues(alpha: 0.35),
                             blurRadius: 16,
                             offset: const Offset(0, 6),
                           ),
@@ -1080,7 +1120,10 @@ class _ClassCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: isOngoing
-            ? Border.all(color: const Color(0xFF059669).withValues(alpha: 0.3), width: 1.5)
+            ? Border.all(
+                color: const Color(0xFF059669).withValues(alpha: 0.3),
+                width: 1.5,
+              )
             : null,
         boxShadow: [
           BoxShadow(

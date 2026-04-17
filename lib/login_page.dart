@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+// import 'package:my_app/create_user_credentials.dart';
 import 'package:my_app/services/phone_auth.dart';
+import 'package:my_app/services/user_profile_service.dart';
 import 'package:my_app/Student/student_dashboard.dart';
 import 'package:my_app/Teacher/professor_dashboard.dart';
 
@@ -38,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Center(
                 child: Container(
                   width:
-                  110, // <-- Larger size so you can drop your logo in easily
+                      110, // <-- Larger size so you can drop your logo in easily
                   height: 110,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -235,62 +237,113 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () async {
                           final otp = otpController.text.trim();
                           if (otp.isEmpty) return;
+
                           setState(() {
                             isLoading = true;
                           });
 
-                          final user = await phoneAuth.verifyOTP(
-                            otp: otp,
-                            onError: (error) {
+                          try {
+                            final user = await phoneAuth.verifyOTP(
+                              otp: otp,
+                              onError: (error) {
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(SnackBar(content: Text(error)));
+                              },
+                            );
+
+                            if (user == null) return;
+
+                            final authPhone = user.phoneNumber;
+                            if (authPhone == null || authPhone.isEmpty) {
+                              await phoneAuth.signOut();
+
                               if (!mounted) return;
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text(error)));
-                            },
-                          );
-
-                          if (user != null) {
-                            switch (selectedRole) {
-                              case "Student":
-                                if (context.mounted) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const StudentDashboard(),
-                                    ),
-                                  );
-                                }
-                                break;
-
-                              case "Teacher":
-                                if (context.mounted) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const DashboardPage(),
-                                    ),
-                                  );
-                                }
-                                break;
-
-                              case "Admin":
-                                if (context.mounted) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const StudentDashboard(),
-                                    ),
-                                  );
-                                }
-                                break;
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Verified phone not available. Login again.',
+                                  ),
+                                ),
+                              );
+                              return;
                             }
-                          }
 
-                          if (!mounted) return;
-                          setState(() => isLoading = false);
+                            if (selectedRole == 'Student') {
+                              final student = await UserProfileService.instance
+                                  .fetchStudentByVerifiedPhone(authPhone);
+
+                              if (student == null) {
+                                await phoneAuth.signOut();
+                                if (!mounted) return;
+                                // ignore: use_build_context_synchronously
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Student not registered"),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              if (!mounted) return;
+                              Navigator.pushReplacement(
+                                // ignore: use_build_context_synchronously
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => StudentDashboard(profile: student),
+                                ),
+                              );
+                              return;
+                            }
+
+                            if (selectedRole == 'Teacher') {
+                              final teacher = await UserProfileService.instance
+                                  .fetchFacultyByVerifiedPhone(authPhone);
+
+                              if (teacher == null) {
+                                await phoneAuth.signOut();
+                                if (!mounted) return;
+                                // ignore: use_build_context_synchronously
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Teacher not registered'),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              if (!mounted) return;
+                              Navigator.pushReplacement(
+                                // ignore: use_build_context_synchronously
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DashboardPage(profile: teacher),
+                                ),
+                              );
+                              return;
+                            }
+
+                            await phoneAuth.signOut();
+                            if (!mounted) return;
+                            // ignore: use_build_context_synchronously
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Admin phone flow is not configured yet.',
+                                ),
+                              ),
+                            );
+                          } catch (e) {
+                            if (!mounted) return;
+                            // ignore: use_build_context_synchronously
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Login Failed: $e")),
+                            );
+                          } finally {
+                            setState(() => isLoading = false);
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 26, 63, 191),
