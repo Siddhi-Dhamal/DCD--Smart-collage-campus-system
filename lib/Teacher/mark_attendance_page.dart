@@ -633,7 +633,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage>
         child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
       );
     }
-    // FIX: Show red error banner with the actual teacherID and a retry button
+
     if (_subjects.isEmpty) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),

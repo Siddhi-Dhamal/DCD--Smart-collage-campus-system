@@ -693,38 +693,6 @@ class _QuickActionCard extends StatelessWidget {
   }
 }
 
-class _StudentAvatarStack extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final colors = [
-      const Color(0xFFFBBF24),
-      const Color(0xFF34D399),
-      const Color(0xFF60A5FA),
-    ];
-    return SizedBox(
-      width: 60,
-      height: 32,
-      child: Stack(
-        children: List.generate(3, (i) {
-          return Positioned(
-            left: i * 18.0,
-            child: Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                color: colors[i],
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
-              ),
-              child: const Icon(Icons.person, color: Colors.white, size: 14),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-}
-
 class _ActivityCard extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
