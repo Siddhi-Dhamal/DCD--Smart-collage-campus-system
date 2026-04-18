@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentProfile {
+  final String docId;       // Firestore document ID (e.g. "student1")
   final String name;
   final String className;
   final String division;
@@ -11,6 +12,7 @@ class StudentProfile {
   // final String? avatarUrl;
 
   const StudentProfile({
+    required this.docId,
     required this.name,
     required this.className,
     required this.division,
@@ -21,8 +23,9 @@ class StudentProfile {
     // this.avatarUrl,
   });
 
-  factory StudentProfile.fromMap(Map<String, dynamic> map) {
+  factory StudentProfile.fromMap(Map<String, dynamic> map, {String docId = ''}) {
     return StudentProfile(
+      docId: docId,
       name: (map['name'] ?? '').toString(),
       className: (map['class'] ?? '').toString(),
       division: (map['division'] ?? '').toString(),
@@ -36,6 +39,7 @@ class StudentProfile {
 
   factory StudentProfile.empty() {
     return const StudentProfile(
+      docId: '',
       name: 'Student',
       className: '',
       division: '',
@@ -49,6 +53,7 @@ class StudentProfile {
 }
 
 class FacultyProfile {
+  final String teacherID; // Firestore document ID
   final String name;
   final String email;
   final String phoneNumber;
@@ -56,6 +61,7 @@ class FacultyProfile {
   // final String? avatarUrl;
 
   const FacultyProfile({
+    required this.teacherID,
     required this.name,
     required this.email,
     required this.phoneNumber,
@@ -63,8 +69,9 @@ class FacultyProfile {
     // this.avatarUrl,
   });
 
-  factory FacultyProfile.fromMap(Map<String, dynamic> map) {
+  factory FacultyProfile.fromMap(Map<String, dynamic> map, {String docId = ''}) {
     return FacultyProfile(
+      teacherID: docId,
       name: (map['name'] ?? '').toString(),
       email: (map['email'] ?? '').toString(),
       phoneNumber: (map['phoneNumber'] ?? '').toString(),
@@ -75,6 +82,7 @@ class FacultyProfile {
 
   factory FacultyProfile.empty() {
     return const FacultyProfile(
+      teacherID: '',
       name: 'Faculty',
       email: '',
       phoneNumber: '',
@@ -115,7 +123,7 @@ class UserProfileService {
           .get();
 
       if (query.docs.isNotEmpty) {
-        return StudentProfile.fromMap(query.docs.first.data());
+        return StudentProfile.fromMap(query.docs.first.data(), docId: query.docs.first.id);
       }
     }
     return null;
@@ -132,7 +140,7 @@ class UserProfileService {
           .get();
 
       if (query.docs.isNotEmpty) {
-        return FacultyProfile.fromMap(query.docs.first.data());
+        return FacultyProfile.fromMap(query.docs.first.data(), docId: query.docs.first.id);
       }
     }
     return null;

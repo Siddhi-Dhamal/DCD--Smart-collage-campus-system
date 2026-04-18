@@ -193,7 +193,12 @@ class StudentDashboard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const AttendanceDisplayPage(),
+                          builder: (_) => AttendanceDisplayPage(
+                            studentId: student.docId,
+                            studentClass: student.className,
+                            division: student.division,
+                            stream: student.stream,
+                          ),
                         ),
                       );
                     },

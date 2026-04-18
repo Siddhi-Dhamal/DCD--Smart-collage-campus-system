@@ -1,26 +1,21 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// ─── Data Model ───────────────────────────────────────────────────────────────
 
-class SubjectAttendance {
+class _SubjectAttendanceData {
+  final String subjectId;
   final String name;
-  final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
-  final int present;
-  final int total;
+  int present = 0;
+  int total = 0;
 
-  const SubjectAttendance({
+  _SubjectAttendanceData({
+    required this.subjectId,
     required this.name,
-    required this.icon,
-    required this.iconColor,
-    required this.iconBg,
-    required this.present,
-    required this.total,
   });
 
-  double get percent => present / total;
+  double get percent => total == 0 ? 0 : present / total;
 
   Color get percentColor {
     if (percent >= 0.90) return const Color(0xFF059669);
@@ -28,63 +23,58 @@ class SubjectAttendance {
     return const Color(0xFFEA580C);
   }
 
-  Color get barColor {
-    if (percent >= 0.90) return const Color(0xFF059669);
-    if (percent >= 0.75) return const Color(0xFF1A3DB5);
-    return const Color(0xFFEA580C);
-  }
+  Color get barColor => percentColor;
 }
 
-const _subjects = [
-  SubjectAttendance(
-    name: 'Mathematics',
-    icon: Icons.calculate_rounded,
-    iconColor: Color(0xFF1A3DB5),
-    iconBg: Color(0xFFECEFF8),
-    present: 17,
-    total: 20,
-  ),
-  SubjectAttendance(
-    name: 'Data Structures',
-    icon: Icons.storage_rounded,
-    iconColor: Color(0xFFEA580C),
-    iconBg: Color(0xFFFFF0E8),
-    present: 13,
-    total: 21,
-  ),
-  SubjectAttendance(
-    name: 'Physics Lab',
-    icon: Icons.science_rounded,
-    iconColor: Color(0xFF7C3AED),
-    iconBg: Color(0xFFEDE9FE),
-    present: 15,
-    total: 16,
-  ),
-  SubjectAttendance(
-    name: 'English',
-    icon: Icons.menu_book_rounded,
-    iconColor: Color(0xFF059669),
-    iconBg: Color(0xFFD1FAE5),
-    present: 38,
-    total: 40,
-  ),
-  SubjectAttendance(
-    name: 'Computer Science',
-    icon: Icons.computer_rounded,
-    iconColor: Color(0xFFEA580C),
-    iconBg: Color(0xFFFFF0E8),
-    present: 32,
-    total: 44,
-  ),
+// Rotating icon / color assignments for subjects loaded from Firestore
+const _subjectIcons = [
+  Icons.calculate_rounded,
+  Icons.storage_rounded,
+  Icons.science_rounded,
+  Icons.menu_book_rounded,
+  Icons.computer_rounded,
+  Icons.architecture_rounded,
+  Icons.language_rounded,
+  Icons.analytics_rounded,
 ];
 
-const _trendData = [82.0, 85.0, 84.0, 87.0, 88.0, 86.0];
-const _trendLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+const _subjectIconColors = [
+  Color(0xFF1A3DB5),
+  Color(0xFFEA580C),
+  Color(0xFF7C3AED),
+  Color(0xFF059669),
+  Color(0xFFEA580C),
+  Color(0xFF1A3DB5),
+  Color(0xFF7C3AED),
+  Color(0xFF059669),
+];
+
+const _subjectIconBgs = [
+  Color(0xFFECEFF8),
+  Color(0xFFFFF0E8),
+  Color(0xFFEDE9FE),
+  Color(0xFFD1FAE5),
+  Color(0xFFFFF0E8),
+  Color(0xFFECEFF8),
+  Color(0xFFEDE9FE),
+  Color(0xFFD1FAE5),
+];
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 class AttendanceDisplayPage extends StatefulWidget {
-  const AttendanceDisplayPage({super.key});
+  final String studentId;
+  final String studentClass;
+  final String division;
+  final String stream;
+
+  const AttendanceDisplayPage({
+    super.key,
+    required this.studentId,
+    required this.studentClass,
+    required this.division,
+    required this.stream,
+  });
 
   @override
   State<AttendanceDisplayPage> createState() => _AttendanceDisplayPageState();
@@ -95,7 +85,34 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
   late AnimationController _arcController;
   late Animation<double> _arcAnimation;
 
-  final double _overallPercent = 0.82;
+  bool _isLoading = true;
+  List<_SubjectAttendanceData> _subjects = [];
+  int _totalPresent = 0;
+  int _totalClasses = 0;
+  List<double> _trendData = [];
+  List<String> _trendLabels = [];
+
+  double get _overallPercent =>
+      _totalClasses == 0 ? 0 : _totalPresent / _totalClasses;
+
+  String get _standingText {
+    if (_overallPercent >= 0.90) return 'Excellent Standing';
+    if (_overallPercent >= 0.75) return 'Good Standing';
+    if (_overallPercent >= 0.60) return 'Average Standing';
+    return 'Low Attendance';
+  }
+
+  Color get _standingBadgeColor {
+    if (_overallPercent >= 0.75) return const Color(0xFF059669);
+    if (_overallPercent >= 0.60) return const Color(0xFFD97706);
+    return const Color(0xFFE53E3E);
+  }
+
+  Color get _standingBadgeBg {
+    if (_overallPercent >= 0.75) return const Color(0xFFD1FAE5);
+    if (_overallPercent >= 0.60) return const Color(0xFFFFF3CD);
+    return const Color(0xFFFEE2E2);
+  }
 
   @override
   void initState() {
@@ -108,7 +125,7 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
       parent: _arcController,
       curve: Curves.easeOutCubic,
     );
-    _arcController.forward();
+    _loadAttendanceData();
   }
 
   @override
@@ -117,6 +134,169 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
     super.dispose();
   }
 
+  // ── Fetch attendance from Firestore ────────────────────────────────────────
+  Future<void> _loadAttendanceData() async {
+    setState(() => _isLoading = true);
+
+    try {
+      // 1. Fetch all attendance session documents
+      final attendanceSnap =
+      await FirebaseFirestore.instance.collection('attendance').get();
+
+      // 2. Filter by this student's class / division / stream (in Dart to
+      //    avoid composite-index requirement)
+      final matchingSessions = attendanceSnap.docs.where((doc) {
+        final d = doc.data();
+        return d['standard'] == widget.studentClass &&
+            d['division'] == widget.division &&
+            (d['stream'] as String? ?? '').toLowerCase() ==
+                widget.stream.toLowerCase();
+      }).toList();
+
+      if (matchingSessions.isEmpty) {
+        setState(() {
+          _isLoading = false;
+          _subjects = [];
+          _totalPresent = 0;
+          _totalClasses = 0;
+          _trendData = List.filled(6, 0);
+          _trendLabels = _buildMonthLabels();
+        });
+        _arcController.forward();
+        return;
+      }
+
+      // 3. Fetch the records sub-document for every matching session in parallel
+      final recordFutures = matchingSessions.map((doc) async {
+        final recSnap = await FirebaseFirestore.instance
+            .collection('attendance')
+            .doc(doc.id)
+            .collection('records')
+            .doc('studentID')
+            .get();
+        return MapEntry(doc, recSnap);
+      });
+
+      final results = await Future.wait(recordFutures);
+
+      // 4. Aggregate by subject & collect monthly data
+      final subjectMap = <String, _SubjectAttendanceData>{};
+      final monthlyPresent = <String, int>{};
+      final monthlyTotal = <String, int>{};
+      int totalPresent = 0;
+      int totalClasses = 0;
+
+      for (final entry in results) {
+        final doc = entry.key;
+        final recSnap = entry.value;
+        final data = doc.data();
+
+        final subjectId = (data['subjectID'] ?? '').toString();
+        final subjectName = (data['subjectName'] ?? 'Unknown').toString();
+        final dateStr = (data['date'] ?? '').toString(); // "DD-MM-YYYY"
+
+        // ── Per-subject aggregation ──
+        subjectMap.putIfAbsent(
+          subjectId,
+              () => _SubjectAttendanceData(
+            subjectId: subjectId,
+            name: subjectName,
+          ),
+        );
+        subjectMap[subjectId]!.total++;
+        totalClasses++;
+
+        // Check student presence in the records map
+        // FIX: Records stored as strings "present"/"absent"/"late"
+        // Also supports old bool format for backward compatibility
+        bool isPresent = false;
+        if (recSnap.exists) {
+          final recs = recSnap.data();
+          if (recs != null) {
+            final val = recs[widget.studentId];
+            isPresent = val == 'present' || val == 'late' || val == true;
+          }
+        }
+
+        if (isPresent) {
+          subjectMap[subjectId]!.present++;
+          totalPresent++;
+        }
+
+        // ── Monthly trend aggregation ──
+        if (dateStr.contains('-')) {
+          final parts = dateStr.split('-');
+          if (parts.length == 3) {
+            final monthKey = '${parts[1]}-${parts[2]}'; // "MM-YYYY"
+            monthlyTotal[monthKey] = (monthlyTotal[monthKey] ?? 0) + 1;
+            if (isPresent) {
+              monthlyPresent[monthKey] = (monthlyPresent[monthKey] ?? 0) + 1;
+            }
+          }
+        }
+      }
+
+      // 5. Build trend data for the last 6 months
+      final now = DateTime.now();
+      final trendData = <double>[];
+      final trendLabels = <String>[];
+      const monthNames = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      ];
+
+      for (int i = 5; i >= 0; i--) {
+        final month = DateTime(now.year, now.month - i, 1);
+        final key =
+            '${month.month.toString().padLeft(2, '0')}-${month.year}';
+        final total = monthlyTotal[key] ?? 0;
+        final present = monthlyPresent[key] ?? 0;
+        final pct = total > 0 ? (present / total * 100) : 0.0;
+        trendData.add(pct);
+        trendLabels.add(monthNames[month.month - 1]);
+      }
+
+      setState(() {
+        _subjects = subjectMap.values.toList()
+          ..sort((a, b) => a.name.compareTo(b.name));
+        _totalPresent = totalPresent;
+        _totalClasses = totalClasses;
+        _trendData = trendData;
+        _trendLabels = trendLabels;
+        _isLoading = false;
+      });
+
+      _arcController.forward();
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading attendance: $e'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+    }
+  }
+
+  List<String> _buildMonthLabels() {
+    final now = DateTime.now();
+    const m = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    ];
+    return List.generate(6, (i) {
+      final month = DateTime(now.year, now.month - (5 - i), 1);
+      return m[month.month - 1];
+    });
+  }
+
+  // ─── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,18 +305,30 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
         children: [
           _buildAppBar(),
           Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildCircularSection(),
-                  const SizedBox(height: 24),
-                  _buildSubjectBreakdown(),
-                  const SizedBox(height: 24),
-                  _buildAttendanceTrend(),
-                  const SizedBox(height: 28),
-                ],
+            child: _isLoading
+                ? const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF1A3DB5),
+              ),
+            )
+                : RefreshIndicator(
+              color: const Color(0xFF1A3DB5),
+              onRefresh: _loadAttendanceData,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildCircularSection(),
+                    const SizedBox(height: 24),
+                    _buildSubjectBreakdown(),
+                    const SizedBox(height: 24),
+                    if (_trendData.isNotEmpty) _buildAttendanceTrend(),
+                    const SizedBox(height: 28),
+                  ],
+                ),
               ),
             ),
           ),
@@ -186,15 +378,18 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
                   ),
                 ),
               ),
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
+              GestureDetector(
+                onTap: _loadAttendanceData,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.refresh_rounded,
+                      color: Colors.white, size: 20),
                 ),
-                child: const Icon(Icons.calendar_month_rounded,
-                    color: Colors.white, size: 20),
               ),
             ],
           ),
@@ -205,6 +400,8 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
 
   // ── Circular Indicator Section ──────────────────────────────────────────────
   Widget _buildCircularSection() {
+    final totalMissed = _totalClasses - _totalPresent;
+
     return Container(
       decoration: const BoxDecoration(
         color: Color(0xFF1A3DB5),
@@ -215,7 +412,9 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.symmetric(vertical: 30),
-        child: Column(
+        child: _totalClasses == 0
+            ? _buildEmptyState()
+            : Column(
           children: [
             AnimatedBuilder(
               animation: _arcAnimation,
@@ -257,9 +456,9 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Good Standing',
-              style: TextStyle(
+            Text(
+              _standingText,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w900,
                 color: Color(0xFF0D1B4B),
@@ -267,12 +466,22 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
-              'You need 75% for exam eligibility',
-              style: TextStyle(
-                fontSize: 13,
-                color: Color(0xFF9098A3),
-                fontWeight: FontWeight.w500,
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 14, vertical: 5),
+              decoration: BoxDecoration(
+                color: _standingBadgeBg,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                _overallPercent >= 0.75
+                    ? 'Safe Zone – above 75%'
+                    : 'Below 75% – attend more classes',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: _standingBadgeColor,
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -282,11 +491,29 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _MiniStat(label: 'Classes\nAttended', value: '74', color: const Color(0xFF059669)),
-                  Container(width: 1, height: 36, color: const Color(0xFFE5E7EB)),
-                  _MiniStat(label: 'Classes\nMissed', value: '16', color: const Color(0xFFEA580C)),
-                  Container(width: 1, height: 36, color: const Color(0xFFE5E7EB)),
-                  _MiniStat(label: 'Total\nClasses', value: '90', color: const Color(0xFF1A3DB5)),
+                  _MiniStat(
+                    label: 'Classes\nAttended',
+                    value: '$_totalPresent',
+                    color: const Color(0xFF059669),
+                  ),
+                  Container(
+                      width: 1,
+                      height: 36,
+                      color: const Color(0xFFE5E7EB)),
+                  _MiniStat(
+                    label: 'Classes\nMissed',
+                    value: '$totalMissed',
+                    color: const Color(0xFFEA580C),
+                  ),
+                  Container(
+                      width: 1,
+                      height: 36,
+                      color: const Color(0xFFE5E7EB)),
+                  _MiniStat(
+                    label: 'Total\nClasses',
+                    value: '$_totalClasses',
+                    color: const Color(0xFF1A3DB5),
+                  ),
                 ],
               ),
             ),
@@ -296,8 +523,51 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
     );
   }
 
+  // ── Empty State ─────────────────────────────────────────────────────────────
+  Widget _buildEmptyState() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 40),
+      child: Column(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: const Color(0xFFECEFF8),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.event_busy_rounded,
+                color: Color(0xFF9098A3), size: 40),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'No Attendance Records Yet',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF0D1B4B),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Attendance will appear here once your\nteacher marks it',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              color: const Color(0xFF9098A3),
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // ── Subject Breakdown ───────────────────────────────────────────────────────
   Widget _buildSubjectBreakdown() {
+    if (_subjects.isEmpty) return const SizedBox.shrink();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -316,14 +586,15 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFFECEFF8),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text(
-                  'Semester 4',
-                  style: TextStyle(
+                child: Text(
+                  '${_subjects.length} Subjects',
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF1A3DB5),
@@ -333,7 +604,16 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
             ],
           ),
           const SizedBox(height: 14),
-          ..._subjects.map((s) => _SubjectCard(subject: s)),
+          ...List.generate(_subjects.length, (i) {
+            final s = _subjects[i];
+            final idx = i % _subjectIcons.length;
+            return _SubjectCard(
+              subject: s,
+              icon: _subjectIcons[idx],
+              iconColor: _subjectIconColors[idx],
+              iconBg: _subjectIconBgs[idx],
+            );
+          }),
         ],
       ),
     );
@@ -341,6 +621,9 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
 
   // ── Attendance Trend ────────────────────────────────────────────────────────
   Widget _buildAttendanceTrend() {
+    // Only show trend if there is at least some data
+    final hasData = _trendData.any((v) => v > 0);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -369,12 +652,35 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
                 ),
               ],
             ),
-            child: SizedBox(
+            child: hasData
+                ? SizedBox(
               height: 180,
               child: CustomPaint(
                 painter: _LinechartPainter(
                   data: _trendData,
                   labels: _trendLabels,
+                ),
+              ),
+            )
+                : SizedBox(
+              height: 120,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.show_chart_rounded,
+                        color: const Color(0xFFD1D5DB), size: 36),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Trend data will appear after\na few weeks of attendance',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Color(0xFF9098A3),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -388,8 +694,17 @@ class _AttendanceDisplayPageState extends State<AttendanceDisplayPage>
 // ─── Subject Card ─────────────────────────────────────────────────────────────
 
 class _SubjectCard extends StatelessWidget {
-  final SubjectAttendance subject;
-  const _SubjectCard({required this.subject});
+  final _SubjectAttendanceData subject;
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBg;
+
+  const _SubjectCard({
+    required this.subject,
+    required this.icon,
+    required this.iconColor,
+    required this.iconBg,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -415,10 +730,10 @@ class _SubjectCard extends StatelessWidget {
                 width: 46,
                 height: 46,
                 decoration: BoxDecoration(
-                  color: subject.iconBg,
+                  color: iconBg,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(subject.icon, color: subject.iconColor, size: 22),
+                child: Icon(icon, color: iconColor, size: 22),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -473,6 +788,14 @@ class _SubjectCard extends StatelessWidget {
             children: [
               Text(
                 'Present: ${subject.present}',
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: Color(0xFF9098A3),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                'Absent: ${subject.total - subject.present}',
                 style: const TextStyle(
                   fontSize: 11,
                   color: Color(0xFF9098A3),
@@ -600,8 +923,11 @@ class _LinechartPainter extends CustomPainter {
     final chartW = size.width - leftPad;
     final chartH = size.height - bottomPad - topPad;
 
-    const minVal = 70.0;
-    const maxVal = 100.0;
+    // Dynamic min / max with sensible defaults
+    final rawMin = data.reduce(min);
+    final rawMax = data.reduce(max);
+    final minVal = (rawMin - 10).clamp(0.0, 90.0);
+    final maxVal = (rawMax + 10).clamp(minVal + 10, 100.0);
 
     // Grid lines + y labels
     final gridPaint = Paint()
@@ -609,22 +935,24 @@ class _LinechartPainter extends CustomPainter {
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
-    final yValues = [70.0, 78.0, 86.0, 100.0];
-    for (final y in yValues) {
-      final dy =
-          topPad + chartH * (1 - (y - minVal) / (maxVal - minVal));
+    final range = maxVal - minVal;
+    final ySteps = [0.0, 0.33, 0.66, 1.0];
+    for (final frac in ySteps) {
+      final y = minVal + range * frac;
+      final dy = topPad + chartH * (1 - frac);
       canvas.drawLine(
         Offset(leftPad, dy),
         Offset(size.width, dy),
-        gridPaint..color = const Color(0xFFE5E7EB),
+        gridPaint,
       );
       final tp = TextPainter(
         text: TextSpan(
           text: y.toInt().toString(),
           style: const TextStyle(
-              fontSize: 10,
-              color: Color(0xFF9098A3),
-              fontWeight: FontWeight.w600),
+            fontSize: 10,
+            color: Color(0xFF9098A3),
+            fontWeight: FontWeight.w600,
+          ),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
@@ -632,16 +960,17 @@ class _LinechartPainter extends CustomPainter {
     }
 
     // X labels
-    final step = chartW / (data.length - 1);
+    final step = data.length > 1 ? chartW / (data.length - 1) : chartW;
     for (int i = 0; i < labels.length; i++) {
       final dx = leftPad + i * step;
       final tp = TextPainter(
         text: TextSpan(
           text: labels[i],
           style: const TextStyle(
-              fontSize: 10,
-              color: Color(0xFF9098A3),
-              fontWeight: FontWeight.w600),
+            fontSize: 10,
+            color: Color(0xFF9098A3),
+            fontWeight: FontWeight.w600,
+          ),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
@@ -655,6 +984,8 @@ class _LinechartPainter extends CustomPainter {
           topPad + chartH * (1 - (data[i] - minVal) / (maxVal - minVal));
       return Offset(dx, dy);
     });
+
+    if (points.length < 2) return;
 
     // Fill under line
     final fillPath = Path()..moveTo(points.first.dx, points.first.dy);
@@ -724,5 +1055,5 @@ class _LinechartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_LinechartPainter old) => false;
+  bool shouldRepaint(_LinechartPainter old) => true;
 }

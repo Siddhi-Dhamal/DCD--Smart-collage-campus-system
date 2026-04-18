@@ -41,7 +41,7 @@ class _DashboardPageState extends State<DashboardPage> {
           return const Center(
             child: Text('Inbox', style: TextStyle(fontSize: 24)),
           );
-        default: 
+        default:
           return DashboardContent(profile: faculty);
       }
     }
@@ -308,341 +308,49 @@ class DashboardContent extends StatelessWidget {
             ),
           ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
-          // Total Students Card
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 18,
-                ),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF7C3AED), Color(0xFF5B21B6)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.35),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'TOTAL STUDENTS',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white70,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          '248',
-                          style: TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            height: 1,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.arrow_upward_rounded,
-                              color: Colors.white70,
-                              size: 13,
-                            ),
-                            const SizedBox(width: 4),
-                            const Text(
-                              '12 new this semester',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.white70,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        _StudentAvatarStack(),
-                        const SizedBox(width: 14),
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.groups_rounded,
-                            color: Colors.white,
-                            size: 26,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 14)),
-
-          // Stats Cards
+          // Stats: Classes Today + Total Students (side by side, both blue)
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF1A3DB5), Color(0xFF2451CC)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(
-                              0xFF1A3DB5,
-                            ).withValues(alpha: 0.35),
-                            blurRadius: 16,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
+                    child: _StatCard(
+                      label: 'CLASSES TODAY',
+                      value: '4',
+                      subtitle: 'Next in 15m',
+                      subtitleIcon: Icons.trending_up_rounded,
+                      subtitleColor: Colors.white70,
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF1A3DB5), Color(0xFF2451CC)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'CLASSES TODAY',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white70,
-                                  letterSpacing: 1.2,
-                                ),
-                              ),
-                              const Icon(
-                                Icons.calendar_today_rounded,
-                                color: Colors.white70,
-                                size: 16,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            '4',
-                            style: TextStyle(
-                              fontSize: 42,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              height: 1,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.trending_up_rounded,
-                                color: Colors.white70,
-                                size: 14,
-                              ),
-                              const SizedBox(width: 4),
-                              const Text(
-                                'Next starts in 15m',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.white70,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      headerIcon: Icons.calendar_today_rounded,
+                      headerIconColor: Colors.white70,
+                      valueColor: Colors.white,
+                      labelColor: Colors.white70,
                     ),
                   ),
-                  const SizedBox(width: 14),
-
-                  // Classes Today
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF1A3DB5), Color(0xFF2451CC)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(
-                              0xFF1A3DB5,
-                            ).withValues(alpha: 0.35),
-                            blurRadius: 16,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
+                    child: _StatCard(
+                      label: 'TOTAL STUDENTS',
+                      value: '248',
+                      subtitle: '+12 this sem',
+                      subtitleIcon: Icons.arrow_upward_rounded,
+                      subtitleColor: Colors.white70,
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF1A3DB5), Color(0xFF2451CC)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'CLASSES TODAY',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white70,
-                                  letterSpacing: 1.2,
-                                ),
-                              ),
-                              const Icon(
-                                Icons.calendar_today_rounded,
-                                color: Colors.white70,
-                                size: 16,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            '4',
-                            style: TextStyle(
-                              fontSize: 42,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              height: 1,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.trending_up_rounded,
-                                color: Colors.white70,
-                                size: 14,
-                              ),
-                              const SizedBox(width: 4),
-                              const Text(
-                                'Next starts in 15m',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.white70,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  // Pending Tasks
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.06),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'PENDING TASKS',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF9098A3),
-                                  letterSpacing: 1.2,
-                                ),
-                              ),
-                              Container(
-                                width: 20,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFF3CD),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: const Icon(
-                                  Icons.priority_high_rounded,
-                                  color: Color(0xFFD97706),
-                                  size: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            '12',
-                            style: TextStyle(
-                              fontSize: 42,
-                              fontWeight: FontWeight.w900,
-                              color: Color(0xFF0D1B4B),
-                              height: 1,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.warning_amber_rounded,
-                                color: Color(0xFFE53E3E),
-                                size: 13,
-                              ),
-                              const SizedBox(width: 4),
-                              const Text(
-                                '3 due today',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Color(0xFFE53E3E),
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      headerIcon: Icons.groups_rounded,
+                      headerIconColor: Colors.white70,
+                      valueColor: Colors.white,
+                      labelColor: Colors.white70,
                     ),
                   ),
                 ],
@@ -713,7 +421,10 @@ class DashboardContent extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const MarkAttendancePage(),
+                              builder: (_) => MarkAttendancePage(
+                                teacherID: profile.teacherID,
+                                teacherName: profile.name,
+                              ),
                             ),
                           );
                         },
@@ -1087,6 +798,120 @@ class _ActivityCard extends StatelessWidget {
   }
 }
 
+// ─── Responsive Stat Card ─────────────────────────────────────────────────────
+class _StatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final String subtitle;
+  final IconData subtitleIcon;
+  final Color subtitleColor;
+  final LinearGradient? gradient;
+  final Color? bgColor;
+  final IconData headerIcon;
+  final Color headerIconColor;
+  final Color? headerIconBg;
+  final Color valueColor;
+  final Color labelColor;
+
+  const _StatCard({
+    required this.label,
+    required this.value,
+    required this.subtitle,
+    required this.subtitleIcon,
+    required this.subtitleColor,
+    this.gradient,
+    this.bgColor,
+    required this.headerIcon,
+    required this.headerIconColor,
+    this.headerIconBg,
+    required this.valueColor,
+    required this.labelColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: gradient,
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: (gradient != null
+                ? const Color(0xFF1A3DB5)
+                : Colors.black)
+                .withValues(alpha: gradient != null ? 0.25 : 0.06),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    color: labelColor,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  color: headerIconBg ??
+                      Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: Icon(headerIcon, color: headerIconColor, size: 13),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.w900,
+              color: valueColor,
+              height: 1,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(subtitleIcon, color: subtitleColor, size: 12),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  subtitle,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: subtitleColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ClassCard extends StatelessWidget {
   final String time;
   final String period;
@@ -1121,9 +946,9 @@ class _ClassCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: isOngoing
             ? Border.all(
-                color: const Color(0xFF059669).withValues(alpha: 0.3),
-                width: 1.5,
-              )
+          color: const Color(0xFF059669).withValues(alpha: 0.3),
+          width: 1.5,
+        )
             : null,
         boxShadow: [
           BoxShadow(
